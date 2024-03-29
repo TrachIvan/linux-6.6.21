@@ -405,13 +405,16 @@ int uvc_probe_video(struct uvc_streaming *stream,
 	ret = uvc_set_video_ctrl(stream, probe, 1);
 	if (ret < 0)
 		goto done;
+	ret = uvc_get_video_ctrl(stream, probe, 1, UVC_GET_CUR);
+	if (ret < 0)
+		goto done;
 
 	/* Get the minimum and maximum values for compression settings. */
-	if (!(stream->dev->quirks & UVC_QUIRK_PROBE_MINMAX)) {
-		ret = uvc_get_video_ctrl(stream, &probe_min, 1, UVC_GET_MIN);
+	/*if (!(stream->dev->quirks & UVC_QUIRK_PROBE_MINMAX))*/ {
+		ret = uvc_get_video_ctrl(stream, &probe_max, 1, UVC_GET_MAX);
 		if (ret < 0)
 			goto done;
-		ret = uvc_get_video_ctrl(stream, &probe_max, 1, UVC_GET_MAX);
+		ret = uvc_get_video_ctrl(stream, &probe_min, 1, UVC_GET_MIN);
 		if (ret < 0)
 			goto done;
 
@@ -422,9 +425,9 @@ int uvc_probe_video(struct uvc_streaming *stream,
 		ret = uvc_set_video_ctrl(stream, probe, 1);
 		if (ret < 0)
 			goto done;
-		ret = uvc_get_video_ctrl(stream, probe, 1, UVC_GET_CUR);
+		/*ret = uvc_get_video_ctrl(stream, probe, 1, UVC_GET_CUR);
 		if (ret < 0)
-			goto done;
+			goto done;*/
 
 		if (stream->intf->num_altsetting == 1)
 			break;
@@ -443,6 +446,7 @@ int uvc_probe_video(struct uvc_streaming *stream,
 		probe->wCompQuality = probe_max.wCompQuality;
 		probe->wCompWindowSize = probe_min.wCompWindowSize;
 	}
+	usb_set_interface(stream->dev->udev, stream->intfnum, 0);
 
 done:
 	return ret;
@@ -1061,6 +1065,7 @@ static int uvc_video_decode_start(struct uvc_streaming *stream,
 	 * - bHeaderLength value must be at least 2 bytes (see above)
 	 * - bHeaderLength value can't be larger than the packet size.
 	 */
+	
 	if (len < 2 || data[0] < 2 || data[0] > len) {
 		stream->stats.frame.nb_invalid++;
 		return -EINVAL;

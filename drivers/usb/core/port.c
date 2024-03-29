@@ -109,6 +109,7 @@ static ssize_t disable_store(struct device *dev, struct device_attribute *attr,
 
 	rc = usb_hub_set_port_power(hdev, hub, port1, !disabled);
 
+	printk(KERN_ERR "disable_store port feature");
 	if (disabled) {
 		usb_clear_port_feature(hdev, port1, USB_PORT_FEAT_C_CONNECTION);
 		if (!port_dev->is_superspeed)
@@ -379,6 +380,8 @@ static int usb_port_runtime_suspend(struct device *dev)
 	struct usb_port *peer = port_dev->peer;
 	int port1 = port_dev->portnum;
 	int retval;
+	
+	printk(KERN_ERR "USB Port suspend");
 
 	if (!hub)
 		return -EINVAL;
