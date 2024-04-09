@@ -609,6 +609,27 @@ extern void __raise_softirq_irqoff(unsigned int nr);
 extern void raise_softirq_irqoff(unsigned int nr);
 extern void raise_softirq(unsigned int nr);
 
+#ifdef CONFIG_PREEMPT_RT
+extern void raise_timer_softirq(void);
+extern void raise_hrtimer_softirq(void);
+
+#else
+static inline void raise_timer_softirq(void)
+{
+	raise_softirq(TIMER_SOFTIRQ);
+}
+
+static inline void raise_hrtimer_softirq(void)
+{
+	raise_softirq_irqoff(HRTIMER_SOFTIRQ);
+}
+
+static inline unsigned int local_pending_timers(void)
+{
+        return local_softirq_pending();
+}
+#endif
+
 DECLARE_PER_CPU(struct task_struct *, ksoftirqd);
 
 static inline struct task_struct *this_cpu_ksoftirqd(void)
