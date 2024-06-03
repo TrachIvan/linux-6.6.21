@@ -259,7 +259,7 @@ static const struct ieee80211_regdomain world_regdom = {
                         NL80211_RRF_AUTO_BW),
 
 		/* IEEE 802.11a, channel 52..64 - DFS required */
-		REG_RULE(5260-10, 5320+10, 80, 6, 20,
+		REG_RULE(5260-10, 5480+10, 80, 6, 20,
 			NL80211_RRF_NO_IR |
 			NL80211_RRF_AUTO_BW |
 			NL80211_RRF_DFS),

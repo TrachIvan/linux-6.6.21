@@ -35,7 +35,7 @@ static bool wiphy_freq_limits_valid_chan(struct wiphy *wiphy,
 			return true;
 	}
 
-	return false;
+	return true;
 }
 
 static void wiphy_freq_limits_apply(struct wiphy *wiphy,
